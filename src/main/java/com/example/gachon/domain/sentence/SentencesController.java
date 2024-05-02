@@ -50,20 +50,6 @@ public class SentencesController {
         return ApiResponse.onSuccess(sentencesService.getRecommendSentence(grammar, difficulty));
     }
 
-    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "문장 이미지 업로드 API ",description = "문장 이미지를 업로드한다.")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "IMAGE402", description = "이미지 업로드 실패",content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-
-    })
-
-    public ApiResponse<SuccessStatus> uploadImage(@RequestParam MultipartFile file
-                                                , @AuthenticationPrincipal UserDetails user) {
-        imagesService.uploadImage(file, user.getUsername());
-        return ApiResponse.onSuccess(SuccessStatus._OK);
-    }
-
     @PostMapping(path = "/input")
     @Operation(summary = "문장 직접 입력 API ",description = "문장을 직접 입력 한다.")
     @ApiResponses({

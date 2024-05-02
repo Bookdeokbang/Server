@@ -41,14 +41,14 @@ public class ImagesService {
     }
 
     @Transactional
-    public void uploadImage(MultipartFile file, String email){
+    public void uploadImage(MultipartFile file, String type, String email){
         try {
             Users user = usersRepository.findByEmail(email).orElseThrow(()->new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
             S3Result s3Result = s3Service.uploadFile(file);
 
             Images image = Images.builder()
-                    .type("USER")
+                    .type(type)
                     .url(s3Result.getFileUrl())
                     .name(file.getOriginalFilename())
                     .user(user)
