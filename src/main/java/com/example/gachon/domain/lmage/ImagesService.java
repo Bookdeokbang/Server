@@ -1,5 +1,6 @@
 package com.example.gachon.domain.lmage;
 
+import com.example.gachon.domain.lmage.dto.response.ImageResponseDto;
 import com.example.gachon.domain.user.Users;
 import com.example.gachon.domain.user.UsersRepository;
 import com.example.gachon.global.response.code.resultCode.ErrorStatus;
@@ -17,7 +18,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +63,14 @@ public class ImagesService {
         }
 
 
+    }
+
+    public List<ImageResponseDto.ImageInfoDto> getImagesByUser(Long userId) {
+        Users user = usersRepository.findById(userId).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+        List<Images> images = imagesRepository.findByUser(user);
+
+        return images.stream()
+                .map(ImagesConverter::toImageInfoDto)
+                .collect(Collectors.toList());
     }
 }
