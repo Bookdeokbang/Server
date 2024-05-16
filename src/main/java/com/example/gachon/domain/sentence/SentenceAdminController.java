@@ -56,7 +56,7 @@ public class SentenceAdminController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
     })
-    public ApiResponse<SuccessStatus> createWord(@AuthenticationPrincipal UserDetails user,
+    public ApiResponse<SuccessStatus> createSentences(@AuthenticationPrincipal UserDetails user,
                                                  @RequestBody SentenceRequestDto.SentenceDto sentenceDto) {
         sentencesService.createSentences(user.getUsername(), sentenceDto);
         return ApiResponse.onSuccess(SuccessStatus._OK);

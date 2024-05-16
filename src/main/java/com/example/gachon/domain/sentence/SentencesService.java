@@ -19,6 +19,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -156,11 +163,47 @@ public class SentencesService {
         Users reqUser = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
+            try {
+                HttpClient httpClient = HttpClient.newHttpClient();
+                URI uri = URI.create("http://34.22.93.189:8000/generate?label=" + URLEncoder.encode(sentenceDto.getGrammar(), StandardCharsets.UTF_8));
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(uri)
+                        .POST(HttpRequest.BodyPublishers.noBody())
+                        .header("Accept", "application/json")
+                        .build();
 
-            // todo
-            // AI Server에 요청 후 문장 생성
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() == 200) {
+                    String generatedSentence = response.body();
+                    int colonIndex = generatedSentence.indexOf(":");
+                    String grammar = generatedSentence.substring(0, colonIndex).trim().replaceAll("\"", "");
+                    String content = generatedSentence.substring(colonIndex + 2, generatedSentence.length() - 1).trim();
+                    int contentLength = content.length();
+                    String difficulty;
 
+                    if (contentLength <= 10) {
+                        difficulty = "LOW";
+                    } else if (contentLength <= 20) {
+                        difficulty = "MIDDLE";
+                    } else {
+                        difficulty = "HIGH";
+                    }
 
+                    Sentences sentence = Sentences.builder()
+                            .user(reqUser)
+                            .type("AI_GENERATED")
+                            .content(content)
+                            .difficulty(difficulty)
+                            .grammar(grammar)
+                            .build();
+
+                    sentencesRepository.save(sentence);
+                } else {
+                    throw new GeneralHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+                }
+            } catch (IOException | InterruptedException e) {
+                throw new GeneralHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
+            }
         } else {
             throw new GeneralHandler(ErrorStatus.UNAUTHORIZED);
         }

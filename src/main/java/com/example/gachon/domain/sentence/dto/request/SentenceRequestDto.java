@@ -10,9 +10,7 @@ public class SentenceRequestDto {
     @Getter
     @Builder
     public static class SentenceDto {
-        private String difficulty;
         private String grammar;
-        private String count;
     }
 
     @Getter
