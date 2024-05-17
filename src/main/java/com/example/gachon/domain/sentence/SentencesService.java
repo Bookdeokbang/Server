@@ -15,9 +15,16 @@ import com.example.gachon.global.response.exception.handler.GeneralHandler;
 import com.example.gachon.global.response.exception.handler.HistoriesHandler;
 import com.example.gachon.global.response.exception.handler.SentencesHandler;
 import com.example.gachon.global.response.exception.handler.UsersHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONObject;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,6 +35,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,6 +49,8 @@ public class SentencesService {
     private final UsersRepository usersRepository;
     private final HistoriesRepository historiesRepository;
     private final NotesRepository notesRepository;
+
+
 
     SentenceResponseDto.SentenceInfoDto getSentenceInfo(Long sentenceId) {
         SentenceInfo sentenceInfo = sentenceInfoRepository.findBySentenceId(sentenceId).orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
@@ -61,18 +71,52 @@ public class SentencesService {
         return SentencesConverter.toSentenceInfoDto(sentence, sentenceInfo);
     }
 
+    public String predictSentence(String sentence) {
+
+        String apiUrl = "http://34.22.93.189:8000/predict?model=roberta";
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+        List<String> requestBody = Arrays.asList(sentence);
+
+        HttpEntity<List<String>> requestEntity = new HttpEntity<>(requestBody, headers);
+        String response = restTemplate.postForObject(apiUrl, requestEntity, String.class);
+        int labelIndex = response.indexOf("\"label\":\"") + "\"label\":\"".length();
+        String extractedLabel = response.substring(labelIndex, response.indexOf("\"", labelIndex));
+
+        return extractedLabel;
+    }
+
     @Transactional
     public void inputSentence(String sentence, String email) {
         Users user = usersRepository.findByEmail(email).orElseThrow(()-> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
+        String grammar = predictSentence(sentence);
+
+        String difficulty;
+
+        if (sentence.length() <= 10) {
+            difficulty = "LOW";
+        } else if (sentence.length() <= 20) {
+            difficulty = "MIDDLE";
+        } else {
+            difficulty = "HIGH";
+        }
         Sentences sentenceObject = Sentences.builder()
                 .content(sentence)
                 .type("USER")
+                .user(user)
+                .grammar(grammar)
+                .difficulty(difficulty)
                 .build();
 
         sentencesRepository.save(sentenceObject);
 
-        Histories histories = Histories.builder()
+      Histories histories = Histories.builder()
                 .user(user)
                 .sentence(sentenceObject)
                 .timestamp(LocalDateTime.now())

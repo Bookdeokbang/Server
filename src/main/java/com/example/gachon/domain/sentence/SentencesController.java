@@ -57,7 +57,7 @@ public class SentencesController {
 
     })
 
-    public ApiResponse<SuccessStatus> uploadImage(@RequestParam String sentence
+    public ApiResponse<SuccessStatus> uploadSentence(@RequestParam String sentence
             , @AuthenticationPrincipal UserDetails user) {
         sentencesService.inputSentence(sentence, user.getUsername());
         return ApiResponse.onSuccess(SuccessStatus._OK);
@@ -87,4 +87,6 @@ public class SentencesController {
         sentencesService.deleteHistory(sentenceId, user.getUsername());
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
+
+
 }
