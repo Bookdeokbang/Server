@@ -52,14 +52,14 @@ public class SentencesService {
     private final SentencePosInfoRepository sentencePosInfoRepository;
 
 
-    public SentenceResponseDto.SentencePosInfoDto getSentenceInfo(Long sentenceId) {
+    public SentenceResponseDto.SentenceInfoDto getSentenceInfo(Long sentenceId) {
         Sentences sentence = sentencesRepository.findById(sentenceId)
                 .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_NOT_FOUND));
 
         SentencePosInfo sentencePosInfo = sentencePosInfoRepository.findBySentenceId(sentenceId)
                 .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
 
-        return SentencesConverter.toSentencePosInfoDto(sentence, sentencePosInfo);
+        return SentencesConverter.toSentenceInfoDto(sentence, sentencePosInfo);
     }
 
     SentenceResponseDto.SentenceInfoDto getRecommendSentence(String grammar, String difficulty) {
@@ -69,9 +69,9 @@ public class SentencesService {
         }
         int randomIndex = (int)(Math.random() * sentences.size());
         Sentences sentence = sentences.get(randomIndex);
-        SentenceInfo sentenceInfo = sentenceInfoRepository.findBySentenceId(sentence.getId()).orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
-
-        return SentencesConverter.toSentenceInfoDto(sentence, sentenceInfo);
+        SentencePosInfo sentencePosInfo = sentencePosInfoRepository.findBySentenceId(sentence.getId())
+                .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
+        return SentencesConverter.toSentenceInfoDto(sentence, sentencePosInfo);
     }
 
     public String predictSentence(String sentence) {
@@ -118,7 +118,6 @@ public class SentencesService {
                 .build();
 
         Sentences resultSentence = sentencesRepository.save(sentenceObject);
-
       Histories histories = Histories.builder()
                 .user(user)
                 .sentence(sentenceObject)
@@ -155,10 +154,10 @@ public class SentencesService {
         Users reqUser = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
-            SentenceInfo sentenceInfo = sentenceInfoRepository.findBySentenceId(sentenceId).orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
-            Sentences sentence = sentencesRepository.findById(sentenceId).orElseThrow(()->new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+            SentencePosInfo sentencePosInfo = sentencePosInfoRepository.findBySentenceId(sentenceId)
+                    .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));            Sentences sentence = sentencesRepository.findById(sentenceId).orElseThrow(()->new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
-            return SentencesConverter.toSentenceInfoDto(sentence, sentenceInfo);
+            return SentencesConverter.toSentenceInfoDto(sentence, sentencePosInfo);
 
         } else {
             throw new GeneralHandler(ErrorStatus.UNAUTHORIZED);
@@ -171,7 +170,7 @@ public class SentencesService {
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
             List<Sentences> sentences;
-            List<SentenceInfo> sentenceInfos;
+            List<SentencePosInfo> sentenceInfos;
 
             if (!difficulty.isEmpty()) {
                 if (!grammar.isEmpty()) {
@@ -188,7 +187,7 @@ public class SentencesService {
                     .toList();
 
             sentenceInfos = sentenceIdList.stream()
-                    .map(id -> sentenceInfoRepository.findBySentenceId(id).orElseThrow(()-> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND)))
+                    .map(id -> sentencePosInfoRepository.findBySentenceId(id).orElseThrow(()-> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND)))
                     .toList();
 
             List<SentenceResponseDto.SentenceInfoDto> sentenceInfoDtoList = new ArrayList<>();

@@ -24,14 +24,14 @@ public class SentencesConverter {
                 .build();
     }
 
-    public static SentenceResponseDto.SentenceInfoDto toSentenceInfoDto(Sentences sentence, SentenceInfo sentenceInfo){
+    public static SentenceResponseDto.SentenceInfoDto toSentenceInfoDto(Sentences sentence, SentencePosInfo sentencePosInfo){
         return SentenceResponseDto.SentenceInfoDto.builder()
                 .id(sentence.getId())
                 .type(sentence.getType())
                 .content(sentence.getContent())
                 .difficulty(sentence.getDifficulty())
                 .grammar(sentence.getGrammar())
-                .info(toSentenceComponentInfoDto(sentenceInfo))
+                .info(toSentencePosInfoDto(sentence,sentencePosInfo))
                 .build();
     }
 
@@ -39,6 +39,7 @@ public class SentencesConverter {
             return SentenceResponseDto.SentencePosInfoDto.builder()
                     .text(sentence.getContent())
                     .posTags(sentencePosInfo.getPosTags())
+                    .sentenceId(sentencePosInfo.getSentenceId())
                     .build();
         }
     }

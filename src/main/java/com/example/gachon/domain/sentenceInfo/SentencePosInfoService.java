@@ -37,7 +37,6 @@ public class SentencePosInfoService {
                 .posTags(posTags)
                 .sentenceId(id)
                 .build();
-
         return sentencePosInfoRepository.save(sentencePosInfo);
     }
 

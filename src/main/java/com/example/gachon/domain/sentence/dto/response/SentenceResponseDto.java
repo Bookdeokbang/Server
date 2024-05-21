@@ -1,5 +1,6 @@
 package com.example.gachon.domain.sentence.dto.response;
 
+import com.example.gachon.domain.sentenceInfo.SentencePosInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +40,7 @@ public class SentenceResponseDto {
         private String content;
         private String difficulty;
         private String grammar;
-        private SentenceComponentInfoDto info;
+        private SentencePosInfoDto info;
 
     }
 
