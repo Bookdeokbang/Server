@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 public class SentenceResponseDto {
 
     @Getter
@@ -41,5 +43,11 @@ public class SentenceResponseDto {
 
     }
 
-
+    @Getter
+    @Builder
+    public static class SentencePosInfoDto {
+        private String text;
+        private Long sentenceId;
+        private Map<String, String> posTags;
+    }
 }

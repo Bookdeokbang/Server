@@ -33,7 +33,7 @@ public class SentencesController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
     })
 
-    public ApiResponse<SentenceResponseDto.SentenceInfoDto> getSentenceInfo(@PathVariable Long sentenceId){
+    public ApiResponse<SentenceResponseDto.SentencePosInfoDto> getSentenceInfo(@PathVariable Long sentenceId){
 
         return ApiResponse.onSuccess(sentencesService.getSentenceInfo(sentenceId));
     }
@@ -87,6 +87,8 @@ public class SentencesController {
         sentencesService.deleteHistory(sentenceId, user.getUsername());
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
+
+
 
 
 }

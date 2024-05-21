@@ -6,8 +6,7 @@ import com.example.gachon.domain.note.Notes;
 import com.example.gachon.domain.note.NotesRepository;
 import com.example.gachon.domain.sentence.dto.request.SentenceRequestDto;
 import com.example.gachon.domain.sentence.dto.response.SentenceResponseDto;
-import com.example.gachon.domain.sentenceInfo.SentenceInfo;
-import com.example.gachon.domain.sentenceInfo.SentenceInfoRepository;
+import com.example.gachon.domain.sentenceInfo.*;
 import com.example.gachon.domain.user.Users;
 import com.example.gachon.domain.user.UsersRepository;
 import com.example.gachon.global.response.code.resultCode.ErrorStatus;
@@ -49,14 +48,18 @@ public class SentencesService {
     private final UsersRepository usersRepository;
     private final HistoriesRepository historiesRepository;
     private final NotesRepository notesRepository;
+    private final SentencePosInfoService sentencePosInfoService;
+    private final SentencePosInfoRepository sentencePosInfoRepository;
 
 
+    public SentenceResponseDto.SentencePosInfoDto getSentenceInfo(Long sentenceId) {
+        Sentences sentence = sentencesRepository.findById(sentenceId)
+                .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_NOT_FOUND));
 
-    SentenceResponseDto.SentenceInfoDto getSentenceInfo(Long sentenceId) {
-        SentenceInfo sentenceInfo = sentenceInfoRepository.findBySentenceId(sentenceId).orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
-        Sentences sentence = sentencesRepository.findById(sentenceId).orElseThrow(()->new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+        SentencePosInfo sentencePosInfo = sentencePosInfoRepository.findBySentenceId(sentenceId)
+                .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
 
-        return SentencesConverter.toSentenceInfoDto(sentence, sentenceInfo);
+        return SentencesConverter.toSentencePosInfoDto(sentence, sentencePosInfo);
     }
 
     SentenceResponseDto.SentenceInfoDto getRecommendSentence(String grammar, String difficulty) {
@@ -114,7 +117,7 @@ public class SentencesService {
                 .difficulty(difficulty)
                 .build();
 
-        sentencesRepository.save(sentenceObject);
+        Sentences resultSentence = sentencesRepository.save(sentenceObject);
 
       Histories histories = Histories.builder()
                 .user(user)
@@ -123,7 +126,7 @@ public class SentencesService {
                 .build();
 
         historiesRepository.save(histories);
-
+        sentencePosInfoService.analyzeText(sentence, resultSentence.getId());
     }
 
     @Transactional

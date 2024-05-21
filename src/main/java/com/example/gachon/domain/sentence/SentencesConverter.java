@@ -3,6 +3,7 @@ package com.example.gachon.domain.sentence;
 
 import com.example.gachon.domain.sentence.dto.response.SentenceResponseDto;
 import com.example.gachon.domain.sentenceInfo.SentenceInfo;
+import com.example.gachon.domain.sentenceInfo.SentencePosInfo;
 
 public class SentencesConverter {
 
@@ -34,4 +35,12 @@ public class SentencesConverter {
                 .build();
     }
 
-}
+        public static SentenceResponseDto.SentencePosInfoDto toSentencePosInfoDto(Sentences sentence, SentencePosInfo sentencePosInfo) {
+            return SentenceResponseDto.SentencePosInfoDto.builder()
+                    .text(sentence.getContent())
+                    .posTags(sentencePosInfo.getPosTags())
+                    .build();
+        }
+    }
+
+
