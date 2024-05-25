@@ -57,10 +57,10 @@ public class SentencesController {
 
     })
 
-    public ApiResponse<SuccessStatus> uploadSentence(@RequestParam String sentence
+    public ApiResponse<Long> uploadSentence(@RequestParam String sentence
             , @AuthenticationPrincipal UserDetails user) {
-        sentencesService.inputSentence(sentence, user.getUsername());
-        return ApiResponse.onSuccess(SuccessStatus._OK);
+        Long sentenceId = sentencesService.inputSentence(sentence, user.getUsername());
+        return ApiResponse.onSuccess(sentenceId);
     }
 
     @PostMapping(path = "/note")

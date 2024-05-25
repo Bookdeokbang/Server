@@ -95,7 +95,7 @@ public class SentencesService {
     }
 
     @Transactional
-    public void inputSentence(String sentence, String email) {
+    public Long inputSentence(String sentence, String email) {
         Users user = usersRepository.findByEmail(email).orElseThrow(()-> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
         String grammar = predictSentence(sentence);
@@ -126,6 +126,7 @@ public class SentencesService {
 
         historiesRepository.save(histories);
         sentencePosInfoService.analyzeText(sentence, resultSentence.getId());
+        return resultSentence.getId();
     }
 
     @Transactional

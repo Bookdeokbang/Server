@@ -34,10 +34,10 @@ public class ImagesController {
 
     })
 
-    public ApiResponse<SuccessStatus> uploadImage(@RequestParam MultipartFile file
+    public ApiResponse<Long> uploadImage(@RequestParam MultipartFile file
             , @AuthenticationPrincipal UserDetails user, @RequestParam String type) {
-        imagesService.uploadImage(file, type, user.getUsername());
-        return ApiResponse.onSuccess(SuccessStatus._OK);
+        Long sentenceId = imagesService.uploadImage(file, type, user.getUsername());
+        return ApiResponse.onSuccess(sentenceId);
     }
 
     @GetMapping(path = "/{userId}")

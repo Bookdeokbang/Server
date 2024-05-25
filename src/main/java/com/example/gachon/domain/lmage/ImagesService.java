@@ -1,7 +1,6 @@
 package com.example.gachon.domain.lmage;
 
 import com.example.gachon.domain.lmage.dto.response.ImageResponseDto;
-import com.example.gachon.domain.sentence.Sentences;
 import com.example.gachon.domain.sentence.SentencesRepository;
 import com.example.gachon.domain.sentence.SentencesService;
 import com.example.gachon.domain.user.Users;
@@ -13,15 +12,12 @@ import com.example.gachon.global.response.exception.handler.UsersHandler;
 import com.example.gachon.global.s3.S3Service;
 import com.example.gachon.global.s3.dto.S3Result;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -87,7 +83,7 @@ public class ImagesService {
     }
 
     @Transactional
-    public void uploadImage(MultipartFile file, String type, String email) {
+    public Long uploadImage(MultipartFile file, String type, String email) {
         try {
             Users user = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
@@ -105,13 +101,16 @@ public class ImagesService {
             if (Objects.equals(type, "USER")) {
                 String sentence = ocrToImage(s3Result.getFileUrl());
 
-                sentencesService.inputSentence(sentence, email);
+                Long sentenceId = sentencesService.inputSentence(sentence, email);
+                return sentenceId;
 
             }
         } catch (IllegalStateException e) {
             throw new ImagesHandler(ErrorStatus.IMAGE_NOT_FOUND);
-        }
     }
+        return null;
+    }
+
 
     public List<ImageResponseDto.ImageInfoDto> getImagesByUser(Long userId) {
         Users user = usersRepository.findById(userId).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
