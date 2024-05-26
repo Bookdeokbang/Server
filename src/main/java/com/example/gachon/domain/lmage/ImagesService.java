@@ -83,7 +83,8 @@ public class ImagesService {
     }
 
     @Transactional
-    public Long uploadImage(MultipartFile file, String type, String email) {
+    public String uploadImage(MultipartFile file, String type, String email) {
+        String response = null;
         try {
             Users user = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
@@ -98,17 +99,21 @@ public class ImagesService {
 
             imagesRepository.save(image);
 
-            if (Objects.equals(type, "USER")) {
+            if (Objects.equals(type, "SENTENCE")) {
                 String sentence = ocrToImage(s3Result.getFileUrl());
 
                 Long sentenceId = sentencesService.inputSentence(sentence, email);
-                return sentenceId;
+                response = Long.toString(sentenceId);
 
+            } else if (Objects.equals(type, "USER")){
+                response = ocrToImage(s3Result.getFileUrl());
             }
+
+
         } catch (IllegalStateException e) {
             throw new ImagesHandler(ErrorStatus.IMAGE_NOT_FOUND);
     }
-        return null;
+        return response;
     }
 
 
