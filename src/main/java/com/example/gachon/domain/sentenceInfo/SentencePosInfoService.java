@@ -30,7 +30,7 @@ public class SentencePosInfoService {
         map.add("text", text);
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(map, headers);
 
-        Map<String, String> posTags = restTemplate.postForObject("http://34.22.93.189:8000/pos?text={text}", requestEntity, Map.class, text);
+        Map<String, String> posTags = restTemplate.postForObject("http://34.64.139.6:8000/pos?text={text}", requestEntity, Map.class, text);
 
         SentencePosInfo sentencePosInfo = SentencePosInfo.builder()
                 .text(text)

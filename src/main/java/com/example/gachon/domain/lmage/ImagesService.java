@@ -58,7 +58,7 @@ public class ImagesService {
         try {
 
             HttpClient httpClient = HttpClient.newHttpClient();
-            URI uri = URI.create("http://34.22.93.189:8000/ocr?image_url=" + URLEncoder.encode(url, StandardCharsets.UTF_8));
+            URI uri = URI.create("http://34.64.139.6:8000/ocr?image_url=" + URLEncoder.encode(url, StandardCharsets.UTF_8));
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(uri)
                     .POST(HttpRequest.BodyPublishers.noBody())

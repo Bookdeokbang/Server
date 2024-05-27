@@ -76,7 +76,7 @@ public class SentencesService {
 
     public String predictSentence(String sentence) {
 
-        String apiUrl = "http://34.22.93.189:8000/predict?model=roberta";
+        String apiUrl = "http://34.64.139.6:8000/predict?model=roberta";
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -212,7 +212,7 @@ public class SentencesService {
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
             try {
                 HttpClient httpClient = HttpClient.newHttpClient();
-                URI uri = URI.create("http://34.22.93.189:8000/generate?label=" + URLEncoder.encode(sentenceDto.getGrammar(), StandardCharsets.UTF_8));
+                URI uri = URI.create("http://34.64.139.6:8000/generate?label=" + URLEncoder.encode(sentenceDto.getGrammar(), StandardCharsets.UTF_8));
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(uri)
                         .POST(HttpRequest.BodyPublishers.noBody())
