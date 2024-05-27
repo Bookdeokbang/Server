@@ -74,7 +74,6 @@ public class NoticesService {
             Notices notice = Notices.builder()
                     .title(noticeDto.getTitle())
                     .content(noticeDto.getContent())
-                    .category(noticeDto.getCategory())
                     .isPinned(noticeDto.isPinned())
                     .user(reqUser)
                     .build();
@@ -93,7 +92,6 @@ public class NoticesService {
 
             notice.setTitle(noticeUpdateDto.getTitle());
             notice.setContent(noticeUpdateDto.getContent());
-            notice.setCategory(noticeUpdateDto.getCategory());
 
             noticesRepository.save(notice);
         } else {

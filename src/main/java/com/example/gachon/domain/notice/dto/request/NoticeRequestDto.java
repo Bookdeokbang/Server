@@ -11,7 +11,6 @@ public class NoticeRequestDto {
     public static class NoticeDto {
         private String title;
         private String content;
-        private String category;
         private boolean isPinned;
     }
 
@@ -19,7 +18,6 @@ public class NoticeRequestDto {
     public static class NoticeUpdateDto {
         private String title;
         private String content;
-        private String category;
     }
 
 

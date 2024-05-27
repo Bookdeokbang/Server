@@ -17,7 +17,6 @@ public class NoticeResponseDto {
         private Long noticeId;
         private String title;
         private String content;
-        private String category;
         private boolean isPinned;
         private LocalDateTime created_at;
         private LocalDateTime updated_at;
@@ -31,7 +30,6 @@ public class NoticeResponseDto {
     public static class NoticePreviewDto{
         private Long noticeId;
         private String title;
-        private String category;
         private boolean isPinned;
         private LocalDateTime created_at;
         private LocalDateTime updated_at;
