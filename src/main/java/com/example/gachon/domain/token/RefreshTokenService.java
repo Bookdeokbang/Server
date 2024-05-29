@@ -102,6 +102,12 @@ public class RefreshTokenService {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             Long userId = userDetails.getUserId();
 
+            Users user = usersRepository.findById(userId).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+            if (user.getStatus() == Status.DISABLED) {
+                user.setStatus(Status.ENABLED);
+                usersRepository.save(user);
+            }
+
             // 4. 인증 정보를 기반으로 JWT 토큰 생성
             TokenDto tokenDto = jwtProvider.generateUserToken(authentication, userId.toString());
             // 5. RefreshToken 저장
