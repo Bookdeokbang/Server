@@ -40,7 +40,7 @@ public class NoticesController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
     })
 
-    public ApiResponse<List<NoticeResponseDto.NoticePreviewDto>> getNoticePreviewList(@AuthenticationPrincipal UserDetails user){
+    public ApiResponse<List<NoticeResponseDto.NoticeInfoDto>> getNoticePreviewList(@AuthenticationPrincipal UserDetails user){
 
         return ApiResponse.onSuccess(noticesService.getNoticePreviewList());
     }

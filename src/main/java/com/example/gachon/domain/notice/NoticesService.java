@@ -31,11 +31,11 @@ public class NoticesService {
         return NoticesConverter.toNoticeInfoDto(noticesRepository.findById(noticeId).orElseThrow(() -> new NoticesHandler(ErrorStatus.NOTICE_NOT_FOUND)));
     }
 
-    List<NoticeResponseDto.NoticePreviewDto> getNoticePreviewList() {
+    List<NoticeResponseDto.NoticeInfoDto> getNoticePreviewList() {
         List<Notices> notices = noticesRepository.findAll();
 
         return notices.stream()
-                .map(NoticesConverter::toNoticePreviewDto)
+                .map(NoticesConverter::toNoticeInfoDto)
                 .collect(Collectors.toList());
     }
 
@@ -52,14 +52,14 @@ public class NoticesService {
 
     }
 
-    public List<NoticeResponseDto.NoticePreviewDto> getNoticePreviewListByAdmin(String email) {
+    public List<NoticeResponseDto.NoticeInfoDto> getNoticePreviewListByAdmin(String email) {
         Users reqUser = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
             List<Notices> notices = noticesRepository.findAll();
 
             return notices.stream()
-                    .map(NoticesConverter::toNoticePreviewDto)
+                    .map(NoticesConverter::toNoticeInfoDto)
                     .collect(Collectors.toList());
         } else {
             throw new GeneralHandler(ErrorStatus.UNAUTHORIZED);

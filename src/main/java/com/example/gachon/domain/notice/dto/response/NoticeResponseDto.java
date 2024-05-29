@@ -23,16 +23,4 @@ public class NoticeResponseDto {
 
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class NoticePreviewDto{
-        private Long noticeId;
-        private String title;
-        private boolean isPinned;
-        private LocalDateTime created_at;
-        private LocalDateTime updated_at;
-
-    }
 }

@@ -16,13 +16,4 @@ public class NoticesConverter {
                 .build();
     }
 
-    public static NoticeResponseDto.NoticePreviewDto toNoticePreviewDto(Notices notices){
-        return NoticeResponseDto.NoticePreviewDto.builder()
-                .noticeId(notices.getId())
-                .title(notices.getTitle())
-                .isPinned(notices.isPinned())
-                .created_at(notices.getCreatedAt())
-                .updated_at(notices.getUpdatedAt())
-                .build();
-    }
 }
