@@ -102,9 +102,9 @@ public class SentencesService {
 
         String difficulty;
 
-        if (sentence.length() <= 10) {
+        if (sentence.length() <= 30) {
             difficulty = "LOW";
-        } else if (sentence.length() <= 20) {
+        } else if (sentence.length() <= 70) {
             difficulty = "MIDDLE";
         } else {
             difficulty = "HIGH";
@@ -228,9 +228,9 @@ public class SentencesService {
                     int contentLength = content.length();
                     String difficulty;
 
-                    if (contentLength <= 10) {
+                    if (contentLength <= 30) {
                         difficulty = "LOW";
-                    } else if (contentLength <= 20) {
+                    } else if (contentLength <= 70) {
                         difficulty = "MIDDLE";
                     } else {
                         difficulty = "HIGH";
