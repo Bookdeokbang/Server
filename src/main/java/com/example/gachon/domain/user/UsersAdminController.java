@@ -37,6 +37,17 @@ public class UsersAdminController {
         return ApiResponse.onSuccess(usersService.getUserInfoByAdmin(user.getUsername(), userId));
     }
 
+    @GetMapping("")
+    @Operation(summary = "모든 유저 정보 조회 API ", description = " 모든 유저의 정보를 가져오기, List<UserInfoDto> 이용")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+
+    public ApiResponse<List<UserResponseDto.UserInfoDto>> getUsersInfoByAdmin(@AuthenticationPrincipal UserDetails user) {
+
+        return ApiResponse.onSuccess(usersService.getUsersInfoByAdmin(user.getUsername()));
+    }
+
     @GetMapping("/{userId}/notifications")
     @Operation(summary = "유저 수신 알람 조회 API ", description = " 유저가 받은 알람을 조회하기, UserNotificationListDto 이용")
     @ApiResponses({

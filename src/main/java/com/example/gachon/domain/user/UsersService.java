@@ -63,6 +63,12 @@ public class UsersService {
         return UsersConverter.toUserHistoryListDto(sentences, user.getId());
     }
 
+    public List<UserResponseDto.UserInfoDto> getUsersInfoByAdmin(String email) {
+        List<Users> users = usersRepository.findAll();
+        return users.stream().map(UsersConverter::toUserInfoDto).collect(Collectors.toList());
+
+    }
+
     @Transactional
     public void updateUserInfo(Long userId, UserRequestDto.UserInfoDto userInfoDto ) {
         Users user = usersRepository.findById(userId).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
