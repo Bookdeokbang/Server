@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface SentencePosInfoRepository extends MongoRepository<SentencePosInfo, String> {
     Optional<SentencePosInfo> findBySentenceId(Long sentenceId);
+    void deleteBySentenceId(Long sentenceId);
 }

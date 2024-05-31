@@ -155,8 +155,11 @@ public class SentencesService {
         Users reqUser = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
+            Sentences sentence = sentencesRepository.findById(sentenceId)
+                    .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_NOT_FOUND));
+
             SentencePosInfo sentencePosInfo = sentencePosInfoRepository.findBySentenceId(sentenceId)
-                    .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));            Sentences sentence = sentencesRepository.findById(sentenceId).orElseThrow(()->new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+                    .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
 
             return SentencesConverter.toSentenceInfoDto(sentence, sentencePosInfo);
 
@@ -166,35 +169,28 @@ public class SentencesService {
 
     }
 
-    public List<SentenceResponseDto.SentenceInfoDto> getAllSentenceInfoWithQueryByAdmin(String difficulty, String grammar, String email) {
+    public List<SentenceResponseDto.SentenceInfoDto> getAllSentenceInfoByAdmin(String email) {
         Users reqUser = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
-            List<Sentences> sentences;
-            List<SentencePosInfo> sentenceInfos;
+            List<Sentences> sentences = sentencesRepository.findAll();
 
-            if (!difficulty.isEmpty()) {
-                if (!grammar.isEmpty()) {
-                    sentences = sentencesRepository.findAllByGrammarAndDifficulty(grammar,difficulty);
-                } else {
-                    sentences = sentencesRepository.findAllByDifficulty(difficulty);
-                }
-            } else {
-                sentences = sentencesRepository.findAllByGrammar(grammar);
-            }
+            List<SentencePosInfo> sentencePosInfos;
 
             List<Long> sentenceIdList = sentences.stream()
                     .map(Sentences::getId)
                     .toList();
 
-            sentenceInfos = sentenceIdList.stream()
-                    .map(id -> sentencePosInfoRepository.findBySentenceId(id).orElseThrow(()-> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND)))
+            sentencePosInfos = sentenceIdList.stream()
+                    .map(id -> sentencePosInfoRepository.findBySentenceId(id)
+                            .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND)))
                     .toList();
+
 
             List<SentenceResponseDto.SentenceInfoDto> sentenceInfoDtoList = new ArrayList<>();
 
             for (int i = 0; i < sentences.size(); i++ ) {
-                sentenceInfoDtoList.add(SentencesConverter.toSentenceInfoDto(sentences.get(i),sentenceInfos.get(i)));
+                sentenceInfoDtoList.add(SentencesConverter.toSentenceInfoDto(sentences.get(i),sentencePosInfos.get(i)));
             }
             return sentenceInfoDtoList;
 
@@ -206,7 +202,7 @@ public class SentencesService {
     }
 
     @Transactional
-    public void createSentences(String email, SentenceRequestDto.SentenceDto sentenceDto) {
+    public SentenceResponseDto.SentenceInfoDto createSentences(String email, SentenceRequestDto.SentenceDto sentenceDto) {
         Users reqUser = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
@@ -244,7 +240,12 @@ public class SentencesService {
                             .grammar(grammar)
                             .build();
 
-                    sentencesRepository.save(sentence);
+                    Sentences sentences = sentencesRepository.save(sentence);
+                    SentencePosInfo sentencePosInfo = sentencePosInfoService.analyzeText(sentences.getContent(), sentences.getId());
+
+                    return SentencesConverter.toSentenceInfoDto(sentence, sentencePosInfo);
+
+
                 } else {
                     throw new GeneralHandler(ErrorStatus.INTERNAL_SERVER_ERROR);
                 }
@@ -307,6 +308,7 @@ public class SentencesService {
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
             Sentences sentence = sentencesRepository.findById(sentenceId).orElseThrow(()-> new SentencesHandler(ErrorStatus.SENTENCE_NOT_FOUND));
+            sentencePosInfoRepository.deleteBySentenceId(sentenceId);
             sentencesRepository.delete(sentence);
 
         } else {

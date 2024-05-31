@@ -28,7 +28,7 @@ public class SentenceAdminController {
     private final SentencesService sentencesService;
 
     @GetMapping("/{sentenceId}/info")
-    @Operation(summary = "문장 정보 조회 API ", description = " 문장 정보를 가져오기, SentenceInfoDto, SentenceComponentInfoDto 이용")
+    @Operation(summary = "문장 정보 조회 API ", description = " 문장 정보를 가져오기, SentenceInfoDto 이용")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
@@ -40,26 +40,24 @@ public class SentenceAdminController {
     }
 
     @GetMapping("")
-    @Operation(summary = "조건 부 문장 정보 조회 API ", description = "조건에 맞는 모든 문장 정보를 가져오기, SentenceInfoDto, SentenceComponentInfoDto 이용")
+    @Operation(summary = "모든 문장 정보 조회 API ", description = "모든 문장 정보를 가져오기, SentenceInfoDto 이용")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
 
-    public ApiResponse<List<SentenceResponseDto.SentenceInfoDto>> getAllSentenceInfoWithQueryByAdmin(@AuthenticationPrincipal UserDetails user,
-                                                                                                     @RequestParam String grammar,
-                                                                                                     @RequestParam String difficulty) {
-        return ApiResponse.onSuccess(sentencesService.getAllSentenceInfoWithQueryByAdmin(difficulty,grammar,user.getUsername()));
+    public ApiResponse<List<SentenceResponseDto.SentenceInfoDto>> getAllSentenceInfoWithQueryByAdmin(@AuthenticationPrincipal UserDetails user){
+        return ApiResponse.onSuccess(sentencesService.getAllSentenceInfoByAdmin(user.getUsername()));
     }
 
-    @PostMapping("")
+    @PostMapping("/generate")
     @Operation(summary = "문장 생성 API ",description = "문장 여러 개 생성하기, SentenceDto 이용")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
     })
-    public ApiResponse<SuccessStatus> createSentences(@AuthenticationPrincipal UserDetails user,
+    public ApiResponse<SentenceResponseDto.SentenceInfoDto> createSentences(@AuthenticationPrincipal UserDetails user,
                                                  @RequestBody SentenceRequestDto.SentenceDto sentenceDto) {
-        sentencesService.createSentences(user.getUsername(), sentenceDto);
-        return ApiResponse.onSuccess(SuccessStatus._OK);
+        SentenceResponseDto.SentenceInfoDto sentenceInfoDto = sentencesService.createSentences(user.getUsername(), sentenceDto);
+        return ApiResponse.onSuccess(sentenceInfoDto);
     }
 
     @PatchMapping("/{sentenceId}/update")
