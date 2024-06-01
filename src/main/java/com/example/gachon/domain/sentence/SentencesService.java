@@ -44,7 +44,6 @@ import java.util.Objects;
 public class SentencesService {
 
     private final SentencesRepository sentencesRepository;
-    private final SentenceInfoRepository sentenceInfoRepository;
     private final UsersRepository usersRepository;
     private final HistoriesRepository historiesRepository;
     private final NotesRepository notesRepository;
@@ -276,31 +275,6 @@ public class SentencesService {
         }
     }
 
-    @Transactional
-    public void updateSentenceComponent(String email, Long sentenceId, SentenceRequestDto.SentenceComponentUpdateDto sentenceComponentUpdateDto) {
-        Users reqUser = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
-
-        if (Objects.equals(reqUser.getRole(), "ADMIN")) {
-            SentenceInfo sentenceInfo = sentenceInfoRepository.findBySentenceId(sentenceId).orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
-
-            sentenceInfo.setSubject(sentenceComponentUpdateDto.getSubject());
-            sentenceInfo.setVerb(sentenceComponentUpdateDto.getVerb());
-            sentenceInfo.setObject(sentenceComponentUpdateDto.getObject());
-            sentenceInfo.setComplement(sentenceComponentUpdateDto.getComplement());
-            sentenceInfo.setAdverbialPhrase(sentenceComponentUpdateDto.getAdverbialPhrase());
-            sentenceInfo.setConjunction(sentenceComponentUpdateDto.getConjunction());
-            sentenceInfo.setRelativeClause(sentenceComponentUpdateDto.getRelativeClause());
-            sentenceInfo.setDirectObject(sentenceComponentUpdateDto.getDirectObject());
-            sentenceInfo.setIndirectObject(sentenceComponentUpdateDto.getIndirectObject());
-            sentenceInfo.setDescription(sentenceComponentUpdateDto.getDescription());
-            sentenceInfo.setInterpretation(sentenceComponentUpdateDto.getInterpretation());
-
-            sentenceInfoRepository.save(sentenceInfo);
-
-        } else {
-            throw new GeneralHandler(ErrorStatus.UNAUTHORIZED);
-        }
-    }
 
     @Transactional
     public void deleteSentence(String email, Long sentenceId) {

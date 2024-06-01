@@ -73,19 +73,6 @@ public class SentenceAdminController {
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
 
-    @PatchMapping("/{sentenceId}/info/update")
-    @Operation(summary = "문장 수정 구성 성분 수정 API", description = "문장 구성 성분 수정 하기, SentenceComponentUpdateDto 사용")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER404", description = "유저가 존재하지 않습니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-    })
-    public ApiResponse<SuccessStatus> updateSentenceComponent(@AuthenticationPrincipal UserDetails user,
-                                                     @PathVariable Long sentenceId,
-                                                     @RequestBody SentenceRequestDto.SentenceComponentUpdateDto sentenceComponentUpdateDto) {
-        sentencesService.updateSentenceComponent(user.getUsername(), sentenceId, sentenceComponentUpdateDto);
-
-        return ApiResponse.onSuccess(SuccessStatus._OK);
-    }
 
     @DeleteMapping ("/{sentenceId}/delete")
     @Operation(summary = "문장 삭제 API ",description = "문장 삭제 하기")
