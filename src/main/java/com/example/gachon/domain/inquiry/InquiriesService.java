@@ -2,9 +2,6 @@ package com.example.gachon.domain.inquiry;
 
 import com.example.gachon.domain.inquiry.dto.request.InquiryRequestDto;
 import com.example.gachon.domain.inquiry.dto.response.InquiryResponseDto;
-import com.example.gachon.domain.note.Notes;
-import com.example.gachon.domain.note.NotesConverter;
-import com.example.gachon.domain.sentenceInfo.SentenceInfo;
 import com.example.gachon.domain.user.Users;
 import com.example.gachon.domain.user.UsersRepository;
 import com.example.gachon.global.response.code.resultCode.ErrorStatus;

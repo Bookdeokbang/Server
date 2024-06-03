@@ -1,6 +1,7 @@
 package com.example.gachon.domain.sentence;
 
 import com.example.gachon.domain.lmage.ImagesService;
+import com.example.gachon.domain.note.dto.request.NoteRequestDto;
 import com.example.gachon.domain.sentence.dto.request.SentenceRequestDto;
 import com.example.gachon.domain.sentence.dto.response.SentenceResponseDto;
 import com.example.gachon.global.response.ApiResponse;
@@ -70,9 +71,9 @@ public class SentencesController {
 
     })
 
-    public ApiResponse<SuccessStatus> sentOutNote(@RequestParam Long sentenceId
+    public ApiResponse<SuccessStatus> sentOutNote(@RequestBody NoteRequestDto.NoteDto noteDto
                                                   , @AuthenticationPrincipal UserDetails user) {
-        sentencesService.sentOutNote(sentenceId, user.getUsername());
+        sentencesService.sentOutNote(noteDto, user.getUsername());
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
 

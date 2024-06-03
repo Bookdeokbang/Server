@@ -4,6 +4,7 @@ import com.example.gachon.domain.history.Histories;
 import com.example.gachon.domain.history.HistoriesRepository;
 import com.example.gachon.domain.note.Notes;
 import com.example.gachon.domain.note.NotesRepository;
+import com.example.gachon.domain.note.dto.request.NoteRequestDto;
 import com.example.gachon.domain.sentence.dto.request.SentenceRequestDto;
 import com.example.gachon.domain.sentence.dto.response.SentenceResponseDto;
 import com.example.gachon.domain.sentenceInfo.*;
@@ -129,12 +130,14 @@ public class SentencesService {
     }
 
     @Transactional
-    public void sentOutNote(Long sentenceId, String email) {
+    public void sentOutNote(NoteRequestDto.NoteDto noteDto, String email) {
         Users user = usersRepository.findByEmail(email).orElseThrow(()-> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
-        Sentences sentence = sentencesRepository.findById(sentenceId).orElseThrow(()-> new SentencesHandler(ErrorStatus.SENTENCE_NOT_FOUND));
+        Sentences sentence = sentencesRepository.findById(noteDto.getSentenceId()).orElseThrow(()-> new SentencesHandler(ErrorStatus.SENTENCE_NOT_FOUND));
 
         Notes note = Notes.builder()
                 .sentence(sentence)
+                .title(noteDto.getTitle())
+                .content(noteDto.getContent())
                 .user(user)
                 .build();
 
