@@ -35,6 +35,19 @@ public class NotesController {
         return ApiResponse.onSuccess(notesService.getNoteInfo(noteId));
     }
 
+    @PatchMapping("/{noteId}/update")
+    @Operation(summary = "학습 노트 수정 요청 API ",description = "학습 노트 수정 하기, NoteDto 이용")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+    })
+
+    public ApiResponse<SuccessStatus> updateNote(@AuthenticationPrincipal UserDetails user,
+                                                     @RequestBody NoteRequestDto.NoteDto noteDto,
+                                                     @PathVariable Long noteId){
+        notesService.updateNote(noteDto, noteId);
+        return ApiResponse.onSuccess(SuccessStatus._OK);
+    }
+
     @GetMapping("/all")
     @Operation(summary = "나의 모든 노트 리스트 조회 API ",description = "나의 모든 노트 정보를 리스트로 가져오기, NotePreviewDto 이용")
     @ApiResponses({

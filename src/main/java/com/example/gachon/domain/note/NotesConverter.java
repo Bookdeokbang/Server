@@ -4,13 +4,13 @@ import com.example.gachon.domain.note.dto.response.NoteResponseDto;
 
 public class NotesConverter {
 
-    public static NoteResponseDto.NoteInfoDto toNoteInfoDto(Notes note, String description) {
+    public static NoteResponseDto.NoteInfoDto toNoteInfoDto(Notes note) {
         return NoteResponseDto.NoteInfoDto.builder()
                 .id(note.getId())
                 .userId(note.getUser().getId())
                 .sentenceId(note.getSentence().getId())
-                .name(note.getSentence().getContent())
-                .content(description)
+                .name(note.getTitle())
+                .content(note.getContent())
                 .build();
     }
 

@@ -4,8 +4,6 @@ import com.example.gachon.domain.memo.Memos;
 import com.example.gachon.domain.memo.MemosRepository;
 import com.example.gachon.domain.note.dto.request.NoteRequestDto;
 import com.example.gachon.domain.note.dto.response.NoteResponseDto;
-import com.example.gachon.domain.sentenceInfo.SentenceInfo;
-import com.example.gachon.domain.sentenceInfo.SentenceInfoRepository;
 import com.example.gachon.domain.user.Users;
 import com.example.gachon.domain.user.UsersConverter;
 import com.example.gachon.domain.user.UsersRepository;
@@ -29,15 +27,11 @@ public class NotesService {
 
     private final UsersRepository usersRepository;
     private final NotesRepository notesRepository;
-    private final SentenceInfoRepository sentenceInfoRepository;
     private final MemosRepository memosRepository;
 
     NoteResponseDto.NoteInfoDto getNoteInfo(Long noteId) {
         Notes note = notesRepository.findById(noteId).orElseThrow(()-> new NotesHandler(ErrorStatus.NOTE_NOT_FOUND));
-        SentenceInfo sentenceInfo = sentenceInfoRepository.findBySentenceId(note.getSentence().getId()).orElseThrow(() ->
-                new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
-
-        return NotesConverter.toNoteInfoDto(note, sentenceInfo.getDescription());
+        return NotesConverter.toNoteInfoDto(note);
     }
 
     public List<NoteResponseDto.NotePreviewDto> getNoteList(String email) {
@@ -47,6 +41,17 @@ public class NotesService {
         return notes.stream()
                 .map(NotesConverter::toNotePreviewDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateNote(NoteRequestDto.NoteDto noteDto, Long noteId) {
+        Notes note = notesRepository.findById(noteId).orElseThrow(()-> new NotesHandler(ErrorStatus.NOTE_NOT_FOUND));
+
+        note.setTitle(noteDto.getTitle());
+        note.setContent(noteDto.getContent());
+
+        notesRepository.save(note);
+
     }
 
     @Transactional
@@ -85,9 +90,8 @@ public class NotesService {
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
             Notes note = notesRepository.findById(noteId).orElseThrow(()-> new NotesHandler(ErrorStatus.NOTE_NOT_FOUND));
-            SentenceInfo sentenceInfo = sentenceInfoRepository.findBySentenceId(note.getSentence().getId()).orElseThrow(() ->
-                    new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
-            return NotesConverter.toNoteInfoDto(note, sentenceInfo.getDescription());
+
+            return NotesConverter.toNoteInfoDto(note);
 
         } else {
             throw new GeneralHandler(ErrorStatus.UNAUTHORIZED);
@@ -103,8 +107,7 @@ public class NotesService {
 
             if (!notes.isEmpty()) {
                 for (Notes note: notes) {
-                    SentenceInfo sentenceInfo = sentenceInfoRepository.findBySentenceId(note.getSentence().getId()).orElseThrow(()->new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
-                    NoteResponseDto.NoteInfoDto noteInfoDto = NotesConverter.toNoteInfoDto(note, sentenceInfo.getDescription());
+                    NoteResponseDto.NoteInfoDto noteInfoDto = NotesConverter.toNoteInfoDto(note);
                     infoLists.add(noteInfoDto);
                 }
             }
