@@ -34,12 +34,12 @@ public class NotesService {
         return NotesConverter.toNoteInfoDto(note);
     }
 
-    public List<NoteResponseDto.NotePreviewDto> getNoteList(String email) {
+    public List<NoteResponseDto.NoteInfoDto> getNoteList(String email) {
         Users user = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
         List<Notes> notes = notesRepository.findAllByUser(user);
 
         return notes.stream()
-                .map(NotesConverter::toNotePreviewDto)
+                .map(NotesConverter::toNoteInfoDto)
                 .collect(Collectors.toList());
     }
 

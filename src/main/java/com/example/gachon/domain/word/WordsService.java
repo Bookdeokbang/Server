@@ -2,7 +2,6 @@ package com.example.gachon.domain.word;
 
 import com.example.gachon.domain.sentence.Sentences;
 import com.example.gachon.domain.sentence.SentencesConverter;
-import com.example.gachon.domain.sentenceInfo.SentenceInfo;
 import com.example.gachon.domain.user.Users;
 import com.example.gachon.domain.user.UsersRepository;
 import com.example.gachon.domain.word.dto.request.WordRequestDto;

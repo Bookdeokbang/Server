@@ -49,12 +49,12 @@ public class NotesController {
     }
 
     @GetMapping("/all")
-    @Operation(summary = "나의 모든 노트 리스트 조회 API ",description = "나의 모든 노트 정보를 리스트로 가져오기, NotePreviewDto 이용")
+    @Operation(summary = "나의 모든 노트 리스트 조회 API ",description = "나의 모든 노트 정보를 리스트로 가져오기, NoteInfoDto 이용")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
     })
 
-    public ApiResponse<List<NoteResponseDto.NotePreviewDto>> getNoteInfo(@AuthenticationPrincipal UserDetails user){
+    public ApiResponse<List<NoteResponseDto.NoteInfoDto>> getNoteInfo(@AuthenticationPrincipal UserDetails user){
 
         return ApiResponse.onSuccess(notesService.getNoteList(user.getUsername()));
     }

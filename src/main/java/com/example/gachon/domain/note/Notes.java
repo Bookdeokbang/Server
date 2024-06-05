@@ -24,7 +24,7 @@ public class Notes extends BaseEntity {
     @JoinColumn(name = "user_id")
     private Users user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "sentence_id")
     private Sentences sentence;
 
