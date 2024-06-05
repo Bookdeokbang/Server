@@ -10,27 +10,10 @@ public class SentenceRequestDto {
     @Getter
     @Builder
     public static class SentenceDto {
+        private Long count;
         private String grammar;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SentenceComponentUpdateDto{
-        private String subject;
-        private String verb;
-        private String object;
-        private String complement;
-        private String adverbialPhrase;
-        private String conjunction;
-        private String relativeClause;
-        private String directObject;
-        private String indirectObject;
-        private String description;
-        private String interpretation;
-
-    }
 
     @Getter
     @Builder

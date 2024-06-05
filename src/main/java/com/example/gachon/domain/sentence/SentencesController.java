@@ -19,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Tag(name = "sentence-controller", description = "사용자 문장 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -39,16 +41,17 @@ public class SentencesController {
         return ApiResponse.onSuccess(sentencesService.getSentenceInfo(sentenceId));
     }
 
-    @GetMapping("/{grammar}/{difficulty}/recommend")
-    @Operation(summary = "유사한 문장 정보 조회 API ",description = " 유사한 문장 정보를 가져오기, SentenceInfoDto, SentenceComponentInfoDto 이용")
+    @GetMapping("/{grammar}/{difficulty}/{count}/recommend")
+    @Operation(summary = "유사한 문장 정보 조회 API ",description = " 유사한 문장 정보를 가져오기, SentenceInfoDto 이용")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
     })
 
-    public ApiResponse<SentenceResponseDto.SentenceInfoDto> getRecommendSentence(@PathVariable String grammar,
-                                                                                 @PathVariable String difficulty){
+    public ApiResponse<List<SentenceResponseDto.SentenceInfoDto>> getRecommendSentences(@PathVariable String grammar,
+                                                                                        @PathVariable String difficulty,
+                                                                                        @PathVariable Long count){
 
-        return ApiResponse.onSuccess(sentencesService.getRecommendSentence(grammar, difficulty));
+        return ApiResponse.onSuccess(sentencesService.getRecommendSentences(grammar, difficulty, count));
     }
 
     @PostMapping(path = "/input")

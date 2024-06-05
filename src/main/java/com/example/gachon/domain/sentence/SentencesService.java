@@ -34,10 +34,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,16 +60,24 @@ public class SentencesService {
         return SentencesConverter.toSentenceInfoDto(sentence, sentencePosInfo);
     }
 
-    SentenceResponseDto.SentenceInfoDto getRecommendSentence(String grammar, String difficulty) {
+    List<SentenceResponseDto.SentenceInfoDto> getRecommendSentences(String grammar, String difficulty, Long count) {
         List<Sentences> sentences = sentencesRepository.findAllByGrammarAndDifficulty(grammar, difficulty);
+
         if (sentences.isEmpty()) {
             throw new SentencesHandler(ErrorStatus.SENTENCE_NOT_FOUND);
         }
-        int randomIndex = (int)(Math.random() * sentences.size());
-        Sentences sentence = sentences.get(randomIndex);
-        SentencePosInfo sentencePosInfo = sentencePosInfoRepository.findBySentenceId(sentence.getId())
-                .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
-        return SentencesConverter.toSentenceInfoDto(sentence, sentencePosInfo);
+
+        Random random = new Random();
+        Collections.shuffle(sentences, random);
+
+        return sentences.stream()
+                .limit(count)
+                .map(sentence -> {
+                    SentencePosInfo sentencePosInfo = sentencePosInfoRepository.findBySentenceId(sentence.getId())
+                            .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
+                    return SentencesConverter.toSentenceInfoDto(sentence, sentencePosInfo);
+                })
+                .collect(Collectors.toList());
     }
 
     public String predictSentence(String sentence) {
