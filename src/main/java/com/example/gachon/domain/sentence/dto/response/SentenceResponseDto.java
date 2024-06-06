@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 public class SentenceResponseDto {
@@ -51,4 +52,16 @@ public class SentenceResponseDto {
         private Long sentenceId;
         private Map<String, String> posTags;
     }
+
+    @Getter
+    @Builder
+    public static class PagedSentenceInfoResponse {
+            private List<SentenceInfoDto> content;
+            private int pageNo;
+            private int pageSize;
+            private long totalElements;
+            private int totalPages;
+            private boolean last;
+    }
+
 }

@@ -10,7 +10,6 @@ public class SentenceRequestDto {
     @Getter
     @Builder
     public static class SentenceDto {
-        private Long count;
         private String grammar;
     }
 

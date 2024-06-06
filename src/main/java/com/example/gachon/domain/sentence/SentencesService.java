@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -177,36 +179,20 @@ public class SentencesService {
 
     }
 
-    public List<SentenceResponseDto.SentenceInfoDto> getAllSentenceInfoByAdmin(String email) {
+    public Page<SentenceResponseDto.SentenceInfoDto> getAllSentenceInfoByAdmin(String email, Pageable pageable) {
         Users reqUser = usersRepository.findByEmail(email).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
         if (Objects.equals(reqUser.getRole(), "ADMIN")) {
-            List<Sentences> sentences = sentencesRepository.findAll();
+            Page<Sentences> sentencesPage = sentencesRepository.findAll(pageable);
 
-            List<SentencePosInfo> sentencePosInfos;
-
-            List<Long> sentenceIdList = sentences.stream()
-                    .map(Sentences::getId)
-                    .toList();
-
-            sentencePosInfos = sentenceIdList.stream()
-                    .map(id -> sentencePosInfoRepository.findBySentenceId(id)
-                            .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND)))
-                    .toList();
-
-
-            List<SentenceResponseDto.SentenceInfoDto> sentenceInfoDtoList = new ArrayList<>();
-
-            for (int i = 0; i < sentences.size(); i++ ) {
-                sentenceInfoDtoList.add(SentencesConverter.toSentenceInfoDto(sentences.get(i),sentencePosInfos.get(i)));
-            }
-            return sentenceInfoDtoList;
-
-
+            return sentencesPage.map(sentence -> {
+                SentencePosInfo sentencePosInfo = sentencePosInfoRepository.findBySentenceId(sentence.getId())
+                        .orElseThrow(() -> new SentencesHandler(ErrorStatus.SENTENCE_INFO_NOT_FOUND));
+                return SentencesConverter.toSentenceInfoDto(sentence, sentencePosInfo);
+            });
         } else {
             throw new GeneralHandler(ErrorStatus.UNAUTHORIZED);
         }
-
     }
 
     @Transactional
