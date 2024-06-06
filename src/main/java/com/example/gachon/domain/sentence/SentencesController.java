@@ -74,10 +74,10 @@ public class SentencesController {
 
     })
 
-    public ApiResponse<SuccessStatus> sentOutNote(@RequestBody NoteRequestDto.NoteDto noteDto
+    public ApiResponse<Long> sentOutNote(@RequestBody NoteRequestDto.NoteDto noteDto
                                                   , @AuthenticationPrincipal UserDetails user) {
-        sentencesService.sentOutNote(noteDto, user.getUsername());
-        return ApiResponse.onSuccess(SuccessStatus._OK);
+        Long noteId = sentencesService.sentOutNote(noteDto, user.getUsername());
+        return ApiResponse.onSuccess(noteId);
     }
 
     @DeleteMapping ("/history/{sentenceId}/delete")

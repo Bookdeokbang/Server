@@ -138,7 +138,7 @@ public class SentencesService {
     }
 
     @Transactional
-    public void sentOutNote(NoteRequestDto.NoteDto noteDto, String email) {
+    public Long sentOutNote(NoteRequestDto.NoteDto noteDto, String email) {
         Users user = usersRepository.findByEmail(email).orElseThrow(()-> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
         Sentences sentence = sentencesRepository.findById(noteDto.getSentenceId()).orElseThrow(()-> new SentencesHandler(ErrorStatus.SENTENCE_NOT_FOUND));
 
@@ -149,7 +149,8 @@ public class SentencesService {
                 .user(user)
                 .build();
 
-        notesRepository.save(note);
+        Notes notes = notesRepository.save(note);
+        return notes.getId();
     }
 
     @Transactional
